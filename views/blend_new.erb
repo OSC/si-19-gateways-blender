@@ -1,0 +1,40 @@
+<h1>Submit a New Blender Job</h1>
+
+<br />
+<br />
+
+<form accept-charset="UTF-8" action="<%= url("/job") %>" method="post">
+    <!--<div class="form-group">-->
+    <!--    <label for="blend_file_path">Select Blend File</label>-->
+    <!--    <input type="file" name="blend_file_path" id="blend_file_path" class="form-control">-->
+    <!--</div>-->
+    <div class="form-group">
+        <label for="num_nodes">How Many Nodes</label>
+        <input type="number" name="num_nodes" class="form-control" id="num_nodes" min="1">
+        <small class="form-text text-muted">More nodes used means less time rendering.</small>
+    </div>
+    <div class="form-group">
+        <label for="num_cpus">How Many CPUs</label>
+        <input type="number" name="num_cpus" class="form-control" id="num_cpus" min="1" max="28">
+        <small class="form-text text-muted">More CPUs means less time rendering.</small>
+    </div>
+    <div class="form-group">
+        <label for="frame_range">Range of Frames Rendered</label>
+        <small class="form-text text-muted">Lower bound</small>
+        <input type="number" name="num_lower_bound" class="form-control" id="num_lower_bound" min="1">
+        <small class="form-text text-muted">Upper bound</small>
+        <input type="number" name="num_upper_bound" class="form-control" id="num_upper_bound" min="2" max="28">
+    </div>
+    <div class="form-group">
+        <input type="checkbox" name="renderthumbnails" value="Bike">Render thumbnails/pictures?<br>
+        <input type="checkbox" name="rendermovie" value="Bike">Render movie?<br>
+    </div>
+    <div class="form-group">
+        <label for="num_cpus">Walltime</label>
+        <small class="form-text text-muted">Hours</small>
+        <input type="number" name="num_hours" class="form-control" id="num_hours" min="0" max="120">
+        <small class="form-text text-muted">Minutes</small>
+        <input type="number" name="num_minutes" class="form-control" id="num_minutes" min="0" max="59">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
