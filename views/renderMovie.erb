@@ -1,7 +1,11 @@
 <h1 style="text-align: center; margin-top: 10px; margin-bottom: 20px;">Rendered Movie</h1>
 <video controls style="width: 62%; margin-left: 19%; margin-right: 19%;">
-  <!--<source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">-->
-  <source src="https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs/users/PZS0731/vshah/ondemand/data/sys/myjobs/projects/default/2/blender_splash_fishy_cat/output/output.mp4" type="video/mp4">
+  <source src="<%= @movieLoc %>" type="video/mp4">
 Your browser does not support the video tag.
-</video> 
-<button type="button" class="btn btn-success" style="display: block; margin: 0 auto; margin-top: 10px; margin-bottom: 20px;">Download Movie</button>
+</video>
+<button type="button" class="btn btn-success" style="display: block; margin: 0 auto; margin-top: 10px; margin-bottom: 20px;">
+    <i class="fa fa-download"></i>
+    <a href="<%= @movieLoc %>" download style="color: inherit; text-decoration: none;">
+        Download Movie
+    </a>
+</button>

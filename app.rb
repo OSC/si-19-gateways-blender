@@ -45,5 +45,44 @@ class App < Sinatra::Base
       redirect url("/job?jobid=#{jobid}&output=#{output_dir}")
       
   end
+
+  get "/blend/new" do
+      erb :blend_new
+  end
+  
+  post "/blend/frames" do
+      @filename = params['blendFile'][:filename]
+      file = params['blendFile'][:tempfile]
+      
+      filepath = File.dirname(__FILE__) + "/public/#{@filename}"
+    
+      File.open(filepath, 'wb') do |f|
+          f.write(file.read)
+      end
+      
+      outputDir = File.dirname(__FILE__) + "/public/output_#{Pathname(@filename).sub_ext('')}_#{rand(1..1000000)}"
+      walltime = "%02d:%02d:00" % [params[:num_hours], params[:num_minutes]]
+      
+      output = `/opt/torque/bin/qsub -A #{params['project_name']} -v BLEND_FILE_PATH=#{filepath},OUTPUT_DIR=#{outputDir},FRAMES_RANGE=#{params[:frames_range]} -l nodes=1:ppn=#{params[:num_cpus]} -l walltime=#{walltime} #{File.dirname(__FILE__) + "/render.sh"} 2>&1`
+      
+      redirect url("/blend/frames?output_dir=#{outputDir}")
+      
+  end
+  
+  get "/blend/frames" do
+  end
+  
+  post "/blend/video" do
+  end
+  
+  get "/blend/video" do
+      
+    #@movieLoc = "https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs/users/PZS0731/vshah/ondemand/data/sys/myjobs/projects/default/2/blender_splash_fishy_cat/output/outfile.mp4"
+    #users/PZS0731/vshah/ondemand/data/sys/myjobs/projects/default/2/blender_splash_fishy_cat/
+    @movieLoc = "https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs/users/PZS0731/vshah/ondemand/data/sys/myjobs/projects/default/2/blender_splash_fishy_cat/video7.mp4"
+    
+    erb :renderMovie
+  end
+
   
 end
