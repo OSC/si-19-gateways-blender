@@ -37,3 +37,6 @@ tags
 !/log/.keep
 /tmp/*
 !/tmp/.keep
+
+public/*
+.nfs*

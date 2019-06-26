@@ -1,4 +1,6 @@
 #!/bin/bash
+#PBS -e /dev/null
+#PBS -o /dev/null
 set -euo pipefail
 IFS=$'\n\t'
 
