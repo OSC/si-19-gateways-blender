@@ -11,31 +11,31 @@
                 <span class="input-group-text" id="blendFileTag">Upload</span>
             </div>
             <div class="custom-file">
-                <input type="file" class="custom-file-input" name="blendFile" id="blendFile" accept=".blend">
+                <input type="file" class="custom-file-input" name="blendFile" id="blendFile" accept=".blend" required>
                 <label class="custom-file-label" for="blendFile" id="fileName">Choose file</label>
             </div>
         </div>
     </div>
     <div class="form-group">
         <label for="project_name">Project</label>
-        <input type="text" name="project_name" class="form-control" id="project_name">
+        <input type="text" name="project_name" class="form-control" id="project_name" required>
         <small class="form-text text-muted">Project to bill RUs to. Ex: PZS000</small>
     </div>
     <!--
     <div class="form-group">
         <label for="num_nodes">How Many Nodes</label>
-        <input type="number" name="num_nodes" class="form-control" id="num_nodes" min="1">
+        <input type="number" name="num_nodes" class="form-control" id="num_nodes" min="1" required>
         <small class="form-text text-muted">More nodes used means less time rendering.</small>
     </div>
     -->
     <div class="form-group">
         <label for="num_cpus">How Many CPUs</label>
-        <input type="number" name="num_cpus" class="form-control" id="num_cpus" min="1" max="28">
+        <input type="number" name="num_cpus" class="form-control" id="num_cpus" value="28" min="1" max="28" required>
         <small class="form-text text-muted">More CPUs means less time rendering.</small>
     </div>
     <div class="form-group">
         <label for="frame_range">Range of Frames Rendered</label>
-        <input type="text" name="frames_range" class="form-control" id="frames_range">
+        <input type="text" name="frames_range" class="form-control" id="frames_range" pattern="(\d+\.\.\d+)|(\d+(?:,\d+)*)" required>
         <small class="form-text text-muted">Ex: "1..10" renders frames 1-10, "1,3,5" renders frames 1, 3 and 5...</small>
         <!--<small class="form-text text-muted">Upper bound</small>-->
         <!--<input type="number" name="num_upper_bound" class="form-control" id="num_upper_bound" min="2" max="28">-->
@@ -47,9 +47,9 @@
     <div class="form-group">
         <label for="num_cpus">Walltime</label>
         <small class="form-text text-muted">Hours</small>
-        <input type="number" name="num_hours" class="form-control" id="num_hours" min="0" max="120">
+        <input type="number" name="num_hours" class="form-control" id="num_hours" value="1" min="0" max="120" required>
         <small class="form-text text-muted">Minutes</small>
-        <input type="number" name="num_minutes" class="form-control" id="num_minutes" min="0" max="59">
+        <input type="number" name="num_minutes" class="form-control" id="num_minutes" value="0" min="0" max="59" required>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
