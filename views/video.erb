@@ -1,0 +1,36 @@
+<h1 style="text-align: center; margin-top: 10px; margin-bottom: 20px;">Render Video</h1>
+<% if @keepRefreshing %>
+    <meta http-equiv="refresh" content="5">
+<% end %>
+<h3 style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+    <% if @jobstats == "C" %>
+        Video Rendered!
+    <% else %>
+        Please wait while your video is rendering...
+    <% end %> 
+</h3>
+<h6 style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+    Job
+    <% if @jobstats == "C" %>
+        Completed
+    <% elsif @jobstats == "R" %>
+        Running
+    <% elsif @jobstats == "Q" %>
+        Queued
+    <% end %>
+
+</h6>
+
+<!--<video controls style="width: 62%; margin-left: 19%; margin-right: 19%;">-->
+<!--  <source src="" type="video/mp4">-->
+<!--Your browser does not support the video tag.-->
+<!--</video>-->
+
+<% if !@keepRefreshing %>
+    <button type="button" class="btn btn-success" style="display: block; margin: 0 auto; margin-top: 10px; margin-bottom: 20px;">
+        <i class="fa fa-download"></i>
+        <a href="<%= @movieLoc %>" download style="color: inherit; text-decoration: none;">
+            Download Movie
+        </a>
+    </button>
+<% end %>
