@@ -51,21 +51,31 @@ class App < Sinatra::Base
       # the number of CPUs to use, the walltime for the job, and the bash file to run the blend command
       output = `/opt/torque/bin/qsub -A #{params['project_name']} -v BLEND_FILE_PATH=#{filepath},OUTPUT_DIR=#{outputDir},FRAMES_RANGE=#{params[:frames_range]} -l nodes=1:ppn=#{params[:num_cpus]} -l walltime=#{walltime} #{File.dirname(__FILE__) + "/render.sh"} 2>&1`
       
+      # Get the job id of the qsub job above
+      jobid = output.split("\n").last
+      
       # Go to the frames page to display the frames as they are being generated
       # Pass the absolute path to the directory with all the rendered frames as an argument
-      redirect url("/blend/frames?output_dir=#{outputDir}")
+      redirect url("/blend/frames?output_dir=#{outputDir}&jobid=#{jobid}")
       
   end
   
   # Display the page to show the frames as they are being generated and allow the user to render the movie
   get "/blend/frames" do
-      
-      # Put the output directory passed in the url into an instance variable so the erb file can access it
-      @output_dir = params['output_dir']
-      
-      erb :frames
-      
-  end
+
+     if params['output_dir']
+
+           @images = Dir.glob(Pathname.new(params['output_dir']).join('*png').to_s)
+
+     else
+
+         @images = []
+
+     end
+
+     erb :test
+
+ end
   
   # Render the movie from the frames
   post "/blend/video" do
