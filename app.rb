@@ -58,27 +58,41 @@ class App < Sinatra::Base
       # Pass the absolute path to the directory with all the rendered frames as an argument
 
       uploadedfile = File.dirname(__FILE__) + "/public/" + (Pathname(@filename).sub_ext('').to_s + "_#{timeStamp}.blend")
-      (FileTest.zero?(uploadedfile)) ? redirect(url("/blend/new")) : redirect(url("/blend/frames?output_dir=#{outputDir}&jobid=#{jobid}"))
+      (FileTest.zero?(uploadedfile)) ? redirect(url("/blend/new")) : redirect(url("/blend/frames?output_dir=#{outputDir}&jobid=#{jobid}&project_name=#{params['project_name']}"))
       # redirect url("/blend/frames?output_dir=#{outputDir}")
       
   end
   
   # Display the page to show the frames as they are being generated and allow the user to render the movie
   get "/blend/frames" do
-
-     if params['output_dir']
-
-           @images = Dir.glob(Pathname.new(params['output_dir']).join('*png').to_s)
-
-     else
-
-         @images = []
-
-     end
-
-     erb :test
-
- end
+      @jobid = params['jobid']
+      @output_dir = params['output_dir']
+      @jobstats = `/opt/torque/bin/qstat -f #{params[:jobid]}`
+      @project_name = params['project_name']
+      
+      # We only want the state of the job, so modify the job stats string to just get the job state
+      # This is Q, R, or C
+      # If the job is too old, then qstat will not return anything, so the ternerary operator handles that
+      @jobstats = (@jobstats != "") ? @jobstats.split("job_state = ")[1][0,1] : ""
+      
+      # Make the page refresh every 5 seconds
+      @keepRefreshing = false
+      
+      # If the job has completed, that means the video has generated
+      # The page does not need to reload every 5 seconds anymore, so set @keepRefreshing to false
+      if @jobstats == "R" || @jobstats == "Q"
+          @keepRefreshing = true
+      end
+      
+      if @output_dir 
+          @images = Dir.glob(Pathname.new(@output_dir).join('*png').to_s)
+      else
+          @images = []
+      end     
+      
+      erb:frames
+    
+    end
   
   # Render the movie from the frames
   post "/blend/video" do
