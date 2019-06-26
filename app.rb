@@ -26,13 +26,13 @@ class App < Sinatra::Base
       # Get the blend file contents uploaded by the user
       file = params['blendFile'][:tempfile]
       
-      # Generate a random number
+      # Generate a time stamp
       # This will be used as a suffix for the blend file name and output directory to avoid 
-      # overwriting prior blend files and output directories as the random number provides a unique name
-      randNum = rand(1..1000000)
+      # overwriting prior blend files and output directories as the time stamp provides a unique name
+      timeStamp = Time.now.strftime("%Y-%m-%d_%H:%M:%S")
       
       # The absolute path to the blend file
-      filepath = File.dirname(__FILE__) + "/public/#{@filename.split(".")[0]}_#{randNum}.#{@filename.split(".")[1]}"
+      filepath = File.dirname(__FILE__) + "/public/#{@filename.split(".")[0]}_#{timeStamp}.#{@filename.split(".")[1]}"
     
       # Upload the file from the :tempfile to Sinatra's public directory
       File.open(filepath, 'wb') do |f|
@@ -40,7 +40,7 @@ class App < Sinatra::Base
       end
       
       # Absolute path to directory where rendered frames will be stored
-      outputDir = File.dirname(__FILE__) + "/public/output_#{Pathname(@filename).sub_ext('')}_#{randNum}"
+      outputDir = File.dirname(__FILE__) + "/public/output_#{Pathname(@filename).sub_ext('')}_#{timeStamp}"
       
       # Create a string for the walltime from the number of hours and number of minutes
       walltime = "%02d:%02d:00" % [params[:num_hours], params[:num_minutes]]
@@ -56,7 +56,10 @@ class App < Sinatra::Base
       
       # Go to the frames page to display the frames as they are being generated
       # Pass the absolute path to the directory with all the rendered frames as an argument
-      redirect url("/blend/frames?output_dir=#{outputDir}&jobid=#{jobid}")
+
+      uploadedfile = File.dirname(__FILE__) + "/public/" + (Pathname(@filename).sub_ext('').to_s + "_#{timeStamp}.blend")
+      (FileTest.zero?(uploadedfile)) ? redirect(url("/blend/new")) : redirect(url("/blend/frames?output_dir=#{outputDir}&jobid=#{jobid}"))
+      # redirect url("/blend/frames?output_dir=#{outputDir}")
       
   end
   
@@ -125,6 +128,4 @@ class App < Sinatra::Base
     
     erb :video
   end
-
-  
 end
