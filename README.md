@@ -1,55 +1,7 @@
-# Base Sinatra App for Summer Institute 2019
+# Blender App for Ohio Supercomputer Center Summer Institute 2019
 
-![GitHub Release](https://img.shields.io/github/release/osc/ood-example-ps.svg)
-[![GitHub License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
+This web application accepts a Blend animation, renders and displays the animation frames, and uses the frames to generate a movie.
 
-This app is meant as a base Passenger app that runs in an [OnDemand] portal
-that uses the [Sinatra] web framework. Feel free to modify it anyway you see
-fit.
+It is built for OnDemand, Ohio Supercomputer Center's open-source web portal to access HPC resources.
 
-## Deploy
-
-The directions below require Ruby and Bundler be installed and accessible from
-the command line. If using a machine that has [Software Collections] you may
-want to run the following command beforehand:
-
-```console
-$ source scl_source enable rh-ruby24 rh-git29
-```
-
-Feel free to replace `rh-ruby24` and `rh-git29` with whatever installation your
-site uses through Software Collections.
-
-1. To deploy and run this app you will need to first go to your OnDemand
-   sandbox directory (if it doesn't exist, then we create it):
-
-   ```console
-   $ mkdir -p ~/ondemand/dev
-   $ cd ~/ondemand/dev
-   ```
-
-2. Then clone down this app and `cd` into it:
-
-   ```console
-   $ git clone git@github.com:OSC/si-19-sinatra-base.git my_app
-   Cloning into 'my_app'...
-   $ cd my_app
-   ```
-
-3. Setup the app before you use it:
-
-   ```console
-   $ bin/setup
-
-   ...
-   ```
-
-4. Now you should be able to access this app from OSC OnDemand at
-   https://ondemand.osc.edu/pun/dev/my_app/
-
-   Note: You may need to replace the domain above with your center's OnDemand
-   portal location if not using OSC.
-
-[OnDemand]: http://openondemand.org/
-[Sinatra]: http://sinatrarb.com/
-[Software Collections]: https://www.softwarecollections.org/en/
+This application was developed by Vedarsh Shah, Soham Konar, Lisha Nawani, Dristi Mittal, and Tairan Zhang.
