@@ -1,6 +1,6 @@
 <!--<pre><%# @images.inspect %></pre>-->
 <head>
-    <% if @keepRefreshing %>
+    <% if false %>
 
         <meta http-equiv="refresh" content="15">
 
@@ -8,7 +8,6 @@
 </head>
 <h1>Frames</h1>
 
-<% if ! @images.empty? %>
     <div id="carouselExampleControls" class="carousel slide carousel-thumbnails" data-ride="carousel">
         <div class="carousel-inner">
         <% counter = 0 %>
@@ -36,7 +35,7 @@
             <span class="sr-only">Next</span>
         </a>
     </div>
-    <ol style="position: static; list-style-type: none; overflow: scroll; overflow-y: hidden; white-space: nowrap; padding-left: 0;">
+    <ol id="thumbnails" style="position: static; list-style-type: none; overflow: scroll; overflow-y: hidden; white-space: nowrap; padding-left: 0;">
         <% counter = 0 %>
         <% for image in @images %>
             <% alignment = ["left",  "middle", "right"] %>
@@ -47,9 +46,8 @@
             <% counter += 1 %>
         <% end %>
     </ol>
-<% else %>
-    <h4>Rendering...</h4>
-<% end %>
+
+    <h4 id="renderingHeader">Rendering...</h4>
 <br/>
 <br/>
 <br/>
@@ -108,16 +106,54 @@
 <br />
 <br />
 
-    <script>
-       
-       $(".thumbnail-li").mouseover(function(){
-           $(this).css("opacity", "0.75")
-           $(this).css("cursor", "pointer")
-       }).mouseout(function(){
-           $(this).css("opacity", "1")
-           $(this).css("cursor", "default")
-       })
+<script>
+   
+   $(".thumbnail-li").mouseover(function(){
+       $(this).css("opacity", "0.75")
+       $(this).css("cursor", "pointer")
+   }).mouseout(function(){
+       $(this).css("opacity", "1")
+       $(this).css("cursor", "default")
+   })
+   
+   function get_num_frames_in_carousel()
+   {
+       return $(".carousel-item").length
+   }
+   
+   function fetchFrames()
+   {
         
-        
-    </script>
+        $.ajax("<%= url("/blend/framesjson?output_dir=#{@output_dir}&jobid=#{@jobid}") %>")
+            .done(function(data) {
+                console.log(data)
+                if(data.frameurls.length > get_num_frames_in_carousel())
+                {
+                    for(i = get_num_frames_in_carousel(); i < data.frameurls.length; i++)
+                    {
+                        var active = ""
+                        
+                        if(i == 0)
+                        {
+                            active = " active"
+                        }
+                        
+                        $(".carousel-inner").append("<div class='carousel-item" + active + "'><img class='d-block w-100' src='" + data.frameurls[i] + "' alt='Slide " + (i + 1) + "'><p style='font-weight: bold;'>Frame " + (i + 1) + "</p></div>")
+                        $("#thumbnails").append('<li class="thumbnail-li" style="width: 25%; display: inline-block; margin-left: 5px; margin-right: 5px;" data-target="#carouselExampleControls" data-slide-to="' + (i + 1) +'"><img src= "' + data.frameurls[i] + '" style="width: 100%; display: block;"><p style="float: right; width: 100%; text-align: center; margin-bottom: 0;">Frame ' + (i + 1) + '</p></li>')
+                    }
+                }
+                
+                $("#renderingHeader").html(data.header)
+                
+                if(data.status == true)
+                {
+                    setTimeout(function(){ fetchFrames() }, 5000);
+                }
+            })
+   }
+   
+   fetchFrames()
+    
+    
+</script>
    

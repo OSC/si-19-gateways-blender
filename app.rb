@@ -1,5 +1,6 @@
 require "sinatra/base"
 require "pathname"
+require "json"
 
 class App < Sinatra::Base
   set :erb, :escape_html => true
@@ -93,6 +94,58 @@ class App < Sinatra::Base
       erb:frames
     
     end
+    
+    get "/blend/framesjson" do
+    
+        @output_dir = params['output_dir']
+        
+        if @output_dir 
+            @images = Dir.glob(Pathname.new(@output_dir).join('*png').to_s)
+        else
+            @images = []
+        end
+        
+        @image_urls = []
+        
+        @jobstats = `/opt/torque/bin/qstat -f #{params[:jobid]}`
+        
+        # We only want the state of the job, so modify the job stats string to just get the job state
+        # This is Q, R, or C
+        # If the job is too old, then qstat will not return anything, so the ternerary operator handles that
+        @jobstats = (@jobstats != "") ? @jobstats.split("job_state = ")[1][0,1] : ""
+        
+        # Make the page refresh every 5 seconds
+        @keepRefreshing = true
+        
+        # If the job has completed, that means the video has generated
+        # The page does not need to reload every 5 seconds anymore, so set @keepRefreshing to false
+        if @jobstats == "C"
+            @keepRefreshing = false
+        end
+        
+        for image in @images do
+            @image_urls << "https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs#{image}" if File.stat(image).size > 0 || @jobstats == "C"
+        end
+        
+        @header = ""
+        
+        case @jobstats
+            when "Q"
+                @header = "Job Queued"
+            when "R"
+                @header = "Job Running"
+            when "C"
+                @header = "Job Completed"
+        end
+        
+        content_type :json
+        
+        {:frameurls => @image_urls, :header => @header, :status => @keepRefreshing}.to_json
+        
+        #JSON.generate(@pre_json)
+        
+    end
+    
   
   # Render the movie from the frames
   post "/blend/video" do
