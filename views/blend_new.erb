@@ -7,9 +7,6 @@
     <div class="form-group">
         <label for="blendFile">Upload Blend File</label>
         <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="blendFileTag">Upload</span>
-            </div>
             <div class="custom-file">
                 <input type="file" class="custom-file-input" name="blendFile" id="blendFile" accept=".blend" required>
                 <label class="custom-file-label" for="blendFile" id="fileName">Choose file</label>
@@ -21,13 +18,6 @@
         <input type="text" name="project_name" class="form-control" id="project_name" required>
         <small class="form-text text-muted">Project to bill RUs to. Ex: PZS000</small>
     </div>
-    <!--
-    <div class="form-group">
-        <label for="num_nodes">How Many Nodes</label>
-        <input type="number" name="num_nodes" class="form-control" id="num_nodes" min="1" required>
-        <small class="form-text text-muted">More nodes used means less time rendering.</small>
-    </div>
-    -->
     <div class="form-group">
         <label for="num_cpus">How Many CPUs</label>
         <input type="number" name="num_cpus" class="form-control" id="num_cpus" value="28" min="1" max="28" required>
@@ -37,13 +27,7 @@
         <label for="frame_range">Range of Frames Rendered</label>
         <input type="text" name="frames_range" class="form-control" id="frames_range" pattern="(\d+\.\.\d+)|(\d+(?:,\d+)*)" required>
         <small class="form-text text-muted">Ex: "1..10" renders frames 1-10, "1,3,5" renders frames 1, 3 and 5...</small>
-        <!--<small class="form-text text-muted">Upper bound</small>-->
-        <!--<input type="number" name="num_upper_bound" class="form-control" id="num_upper_bound" min="2" max="28">-->
     </div>
-    <!--<div class="form-group">-->
-    <!--    <input type="checkbox" name="renderthumbnails"> Render thumbnails/pictures?<br>-->
-    <!--    <input type="checkbox" name="rendermovie"> Render movie?<br>-->
-    <!--</div>-->
     <div class="form-group">
         <label for="num_cpus">Walltime</label>
         <small class="form-text text-muted">Hours</small>
@@ -58,20 +42,27 @@
 <br>
 
 <script>
-    var input = document.getElementById( 'blendFile' );
-    var infoArea = document.getElementById( 'fileName' );
+
+    // Get the file input
+    var input = document.getElementById('blendFile');
     
-    input.addEventListener( 'change', showFileName );
+    // Get label where the file name will be displayed
+    var infoArea = document.getElementById('fileName');
     
-    function showFileName( event ) {
+    // Detect when a new file is selected
+    input.addEventListener('change', showFileName);
+    
+    // Function to change the file name label when a new file is selected
+    function showFileName(event) {
       
-      // the change event gives us the input it occurred in 
+      // Get the file input where a new file was selected
       var input = event.srcElement;
       
-      // the input has an array of files in the `files` property, each one has a name that you can use. We're just using the name here.
+      // Get the name of the first file in the input
       var fileName = input.files[0].name;
       
-      // use fileName however fits your app best, i.e. add it into a div
+      // Change the label to display the file name
       infoArea.textContent = 'File chosen: ' + fileName;
     }
+    
 </script>

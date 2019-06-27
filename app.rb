@@ -5,10 +5,12 @@ require "json"
 class App < Sinatra::Base
   set :erb, :escape_html => true
 
+  # Set the title of the web app
   def title
-    "My App"
+    "Blender"
   end
 
+  # Homepage of app
   get "/" do
     erb :index
   end
@@ -57,56 +59,58 @@ class App < Sinatra::Base
       
       # Go to the frames page to display the frames as they are being generated
       # Pass the absolute path to the directory with all the rendered frames as an argument
-
+      
+      # Get the absolute path to the uploaded blend file
       uploadedfile = File.dirname(__FILE__) + "/public/" + (Pathname(@filename).sub_ext('').to_s + "_#{timeStamp}.blend")
+      
+      # Check if the uploaded blend file is empty
+      # If the uploaded blend file is empty, go back to the form as it is not a valid blend file
+      # If the uploaded blend file is not empty, go to the frames page to display the frames as they are rendering
       (FileTest.zero?(uploadedfile)) ? redirect(url("/blend/new")) : redirect(url("/blend/frames?output_dir=#{outputDir}&jobid=#{jobid}&project_name=#{params['project_name']}"))
-      # redirect url("/blend/frames?output_dir=#{outputDir}")
       
   end
   
   # Display the page to show the frames as they are being generated and allow the user to render the movie
   get "/blend/frames" do
-      @jobid = params['jobid']
-      @output_dir = params['output_dir']
-      @jobstats = `/opt/torque/bin/qstat -f #{params[:jobid]}`
-      @project_name = params['project_name']
+      
+      @jobid = params['jobid']                                  # Get the job id from the arguments passed to this URL
+      @output_dir = params['output_dir']                        # Get the absolute path to the frames output directory passed to this URL
+      @jobstats = `/opt/torque/bin/qstat -f #{params[:jobid]}`  # Get the job statistics of the blender job
+      @project_name = params['project_name']                    # Get the name of the project that was billed for the blender job
       
       # We only want the state of the job, so modify the job stats string to just get the job state
       # This is Q, R, or C
       # If the job is too old, then qstat will not return anything, so the ternerary operator handles that
       @jobstats = (@jobstats != "") ? @jobstats.split("job_state = ")[1][0,1] : ""
       
-      # Make the page refresh every 5 seconds
-      @keepRefreshing = false
-      
-      # If the job has completed, that means the video has generated
-      # The page does not need to reload every 5 seconds anymore, so set @keepRefreshing to false
-      if @jobstats == "R" || @jobstats == "Q"
-          @keepRefreshing = true
-      end
-      
+      # Get an array of absolute paths to all the rendered frames if the frames output directory exists
       if @output_dir 
           @images = Dir.glob(Pathname.new(@output_dir).join('*png').to_s)
       else
           @images = []
       end     
       
-      erb:frames
+      erb :frames
     
     end
     
+    # The AJAX in /blend/frames hits this url to get the currently generated frames, 
+    # the job state, and if AJAX should keep checking for new frames
     get "/blend/framesjson" do
     
-        @output_dir = params['output_dir']
+        @output_dir = params['output_dir']  # The output directory of all the frames
         
+        # Get an array of absolute paths to all the rendered frames if the frames output directory ex
         if @output_dir 
             @images = Dir.glob(Pathname.new(@output_dir).join('*png').to_s)
         else
             @images = []
         end
         
+        # Initialize the variable to hold the urls to all the rendered frames
         @image_urls = []
         
+        # Get the statistics of the blender job
         @jobstats = `/opt/torque/bin/qstat -f #{params[:jobid]}`
         
         # We only want the state of the job, so modify the job stats string to just get the job state
@@ -114,21 +118,25 @@ class App < Sinatra::Base
         # If the job is too old, then qstat will not return anything, so the ternerary operator handles that
         @jobstats = (@jobstats != "") ? @jobstats.split("job_state = ")[1][0,1] : ""
         
-        # Make the page refresh every 5 seconds
+        # Make the AJX refresh every 5 seconds
         @keepRefreshing = true
         
         # If the job has completed, that means the video has generated
-        # The page does not need to reload every 5 seconds anymore, so set @keepRefreshing to false
+        # The AJAX does not need to reload every 5 seconds anymore, so set @keepRefreshing to false
         if @jobstats == "C"
             @keepRefreshing = false
         end
         
+        # Append the absolute paths to all the rendered frames to the file API url and add the full url into the image urls array
+        # Only do this if blender has finished writing to the file or the job has completed
         for image in @images do
             @image_urls << "https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs#{image}" if File.stat(image).size > 0 || @jobstats == "C"
         end
         
+        # Initialize the variable to hold the text in the header status
         @header = ""
         
+        # Depending on the job state, set the header text
         case @jobstats
             when "Q"
                 @header = "Job Queued"
@@ -138,15 +146,15 @@ class App < Sinatra::Base
                 @header = "Job Completed"
         end
         
+        # Since AJAX can easily read JSON objects, we will return data as a JSON object
+        # Normally the return type is text/html, so we need to change it to JSON
         content_type :json
         
+        # Put all the data into a hash and convert it to JSON so the AJAX can use it
         {:frameurls => @image_urls, :header => @header, :status => @keepRefreshing}.to_json
-        
-        #JSON.generate(@pre_json)
         
     end
     
-  
   # Render the movie from the frames
   post "/blend/video" do
       
@@ -195,4 +203,5 @@ class App < Sinatra::Base
     
     erb :video
   end
+  
 end

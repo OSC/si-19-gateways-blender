@@ -1,106 +1,80 @@
-<!--<pre><%# @images.inspect %></pre>-->
-<head>
-    <% if false %>
-
-        <meta http-equiv="refresh" content="15">
-
-    <% end %>
-</head>
 <h1>Frames</h1>
 
-    <div id="carouselExampleControls" class="carousel slide carousel-thumbnails" data-ride="carousel">
-        <div class="carousel-inner">
-        <% counter = 0 %>
-        <% for image in @images %>
-            <% counter += 1 %>
-            <% if counter == 1 %>
-                <div class="carousel-item active">
-                    <img class="d-block w-100" src= "https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs<%= image %>"  alt="Slide <%= counter %>">
-                    <p style="font-weight: bold;">Frame <%= counter %></p>
-                </div>
-            <% else %>
-                <div class="carousel-item">
-                    <img class="d-block w-100" src= "https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs<%= image %>"  alt="Slide <%= counter %>">
-                    <p style="font-weight: bold;">Frame <%= counter %></p>
-                </div>
-            <% end %>
-        <% end %>
-        </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
-    </div>
-    <ol id="thumbnails" style="position: static; list-style-type: none; overflow: scroll; overflow-y: hidden; white-space: nowrap; padding-left: 0;">
-        <% counter = 0 %>
-        <% for image in @images %>
-            <% alignment = ["left",  "middle", "right"] %>
-            <li class="thumbnail-li" style="width: 25%; display: inline-block;" data-target='#carouselExampleControls' data-slide-to='<%= counter %>'>
-                <img src= "https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs<%= image %>" style="width: 100%; display: block; " align="<%= alignment[counter % 3] %>">
-                <p style="float: right; width: 100%; text-align: center; margin-bottom: 0;">Frame <%= (counter + 1) %></p>
-            </li>
-            <% counter += 1 %>
-        <% end %>
-    </ol>
+<h4 id="renderingHeader">Rendering...</h4>
 
-    <h4 id="renderingHeader">Rendering...</h4>
+<div id="carouselExampleControls" class="carousel slide carousel-thumbnails" data-ride="carousel">
+    <div class="carousel-inner">
+    <% counter = 0 %>
+    <% for image in @images %>
+        <% counter += 1 %>
+        <% if counter == 1 %>
+            <div class="carousel-item active">
+                <img class="d-block w-100" src= "https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs<%= image %>"  alt="Slide <%= counter %>">
+                <p style="font-weight: bold;">Frame <%= counter %></p>
+            </div>
+        <% else %>
+            <div class="carousel-item">
+                <img class="d-block w-100" src= "https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs<%= image %>"  alt="Slide <%= counter %>">
+                <p style="font-weight: bold;">Frame <%= counter %></p>
+            </div>
+        <% end %>
+    <% end %>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+<ol id="thumbnails" style="position: static; list-style-type: none; overflow: scroll; overflow-y: hidden; white-space: nowrap; padding-left: 0;">
+    <% counter = 0 %>
+    <% for image in @images %>
+        <% alignment = ["left",  "middle", "right"] %>
+        <li class="thumbnail-li" style="width: 25%; display: inline-block;" data-target='#carouselExampleControls' data-slide-to='<%= counter %>'>
+            <img src= "https://ondemand-test.osc.edu/pun/sys/files/api/v1/fs<%= image %>" style="width: 100%; display: block; " align="<%= alignment[counter % 3] %>">
+            <p style="float: right; width: 100%; text-align: center; margin-bottom: 0;">Frame <%= (counter + 1) %></p>
+        </li>
+        <% counter += 1 %>
+    <% end %>
+</ol>
+
 <br/>
 <br/>
 <br/>
+
 <h3>Render Video Using Frames</h3>
 <form action="<%= url("/blend/video") %>" method="post" enctype="multipart/form-data">
-
    <input type="hidden" name="frames_dir" id="frames_dir" value="<%= @output_dir %>" required>
-
    <div class="form-group">
-
        <label for="project_name">Project</label>
-
        <input type="text" name="project_name" class="form-control" id="project_name" value="<%= @project_name %>" required>
-
        <small class="form-text text-muted">Project to bill RUs to. Ex: PZS000</small>
-
    </div>
 
    <div class="form-group">
-
        <label for="frames_per_sec">Number of Frames per Second in Video</label>
-
        <input type="number" name="frames_per_sec" id="frames_per_sec" class="form-control" placeholder="Frames per second" min="1" required>
-
        <small class="form-text text-muted">More frames per second means faster and shorter video. Standard movies have 24 frames per second.</small>
-
    </div>
 
    <div class="form-group">
-
        <label for="num_cpus">How Many CPUs</label>
-
        <input type="number" name="num_cpus" class="form-control" id="num_cpus" min="1" max="28" value="28" required>
-
        <small class="form-text text-muted">More CPUs means less time rendering.</small>
-
    </div>
 
    <div class="form-group">
-
        <label for="num_cpus">Walltime</label>
-
        <small class="form-text text-muted">Hours</small>
-
        <input type="number" name="num_hours" class="form-control" id="num_hours" min="0" max="120" required>
-
        <small class="form-text text-muted">Minutes</small>
-
        <input type="number" name="num_minutes" class="form-control" id="num_minutes" min="0" max="59" required>
-
-   </div>    
+   </div>  
+   
    <button type="submit" class="btn btn-primary">Render Video</button>
-
 </form>
 
 <br />
@@ -108,43 +82,67 @@
 
 <script>
    
-   $(".thumbnail-li").mouseover(function(){
-       $(this).css("opacity", "0.75")
-       $(this).css("cursor", "pointer")
-   }).mouseout(function(){
-       $(this).css("opacity", "1")
-       $(this).css("cursor", "default")
-   })
+   // Function to make the thumbnails clickable
+   function setHoverAction()
+   {
+       $(".thumbnail-li").mouseover(function(){
+           $(this).css("opacity", "0.75")
+           $(this).css("cursor", "pointer")
+       }).mouseout(function(){
+           $(this).css("opacity", "1")
+           $(this).css("cursor", "default")
+       })
+   }
    
+   // Call the function for the first time to make the current thumbnails clickable
+   setHoverAction()
+   
+   // Function to get the number of frames in the carousel
    function get_num_frames_in_carousel()
    {
        return $(".carousel-item").length
    }
    
+   // Make an AJAX request to get the frames that have been rendered, the text in the rendering header, 
+   // and if we should continue to run the AJAX request
    function fetchFrames()
    {
-        
+        // Make the AJAX request to /blend/framesjson with the output directory and job id passed to this page
         $.ajax("<%= url("/blend/framesjson?output_dir=#{@output_dir}&jobid=#{@jobid}") %>")
+        
+            // Exectue this code when the AJAX request is successful
             .done(function(data) {
-                console.log(data)
+                
+                // If more frames have been rendered than the ones displayed in the carousel, then execute the following code
                 if(data.frameurls.length > get_num_frames_in_carousel())
                 {
+                    // Loop through all the frames not already in the carousel
                     for(i = get_num_frames_in_carousel(); i < data.frameurls.length; i++)
                     {
+                        // The variable hold the active class
                         var active = ""
                         
+                        // If this is the first frame, make it the active frame
                         if(i == 0)
                         {
                             active = " active"
                         }
                         
+                        // Add the image to the carousel
                         $(".carousel-inner").append("<div class='carousel-item" + active + "'><img class='d-block w-100' src='" + data.frameurls[i] + "' alt='Slide " + (i + 1) + "'><p style='font-weight: bold;'>Frame " + (i + 1) + "</p></div>")
-                        $("#thumbnails").append('<li class="thumbnail-li" style="width: 25%; display: inline-block; margin-left: 5px; margin-right: 5px;" data-target="#carouselExampleControls" data-slide-to="' + (i + 1) +'"><img src= "' + data.frameurls[i] + '" style="width: 100%; display: block;"><p style="float: right; width: 100%; text-align: center; margin-bottom: 0;">Frame ' + (i + 1) + '</p></li>')
+                        
+                        // Add the image to the thumbnails
+                        $("#thumbnails").append('<li class="thumbnail-li" style="width: 25%; display: inline-block; margin-left: 5px; margin-right: 5px;" data-target="#carouselExampleControls" data-slide-to="' + i +'"><img src= "' + data.frameurls[i] + '" style="width: 100%; display: block;"><p style="float: right; width: 100%; text-align: center; margin-bottom: 0;">Frame ' + (i + 1) + '</p></li>')
+
+                        // Make the new thumbnails clickable
+                        setHoverAction()
                     }
                 }
                 
+                // Update the rendering header with the new text
                 $("#renderingHeader").html(data.header)
                 
+                // If AJAX should keep refreshing, then execute the AJAX request after 5 seconds
                 if(data.status == true)
                 {
                     setTimeout(function(){ fetchFrames() }, 5000);
@@ -152,8 +150,8 @@
             })
    }
    
+   // Execute the AJAX request for the first time
    fetchFrames()
-    
     
 </script>
    
